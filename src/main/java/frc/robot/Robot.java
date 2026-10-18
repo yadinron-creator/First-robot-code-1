@@ -4,14 +4,24 @@
 
 package frc.robot;
 
+import com.spikes2212.util.smartmotorcontrollers.TalonFXWrapper;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.motorcontrol.MotorController;
+import edu.wpi.first.wpilibj.motorcontrol.Talon;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.commands.Transport;
+import frc.robot.subsystems.MoveTransport;
 
 public class Robot extends TimedRobot {
 
+    MoveTransport moveTransport;
+
     @Override
     public void robotInit() {
+        MotorController motorController = new TalonFXWrapper(20);
+        Transport transport = new Transport(motorController);
 
+        moveTransport = new MoveTransport(transport, 0.5);
     }
 
     @Override
@@ -31,7 +41,12 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
+        CommandScheduler.getInstance().schedule(moveTransport);
+    }
 
+    @Override
+    public void autonomousExit() {
+        CommandScheduler.getInstance().cancel(moveTransport);
     }
 
     @Override
